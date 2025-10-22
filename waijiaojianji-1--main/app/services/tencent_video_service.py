@@ -525,8 +525,15 @@ class TencentVideoService:
         """标准化视频格式以确保字幕烧录兼容性"""
         import subprocess
         import shutil
+        from pathlib import Path
         
-        ffmpeg = os.getenv("FFMPEG_PATH") or shutil.which("ffmpeg") or r"C:\ffmpeg\bin\ffmpeg.exe"
+        # 优先使用项目内的ffmpeg
+        project_root = Path(__file__).parent.parent.parent
+        project_ffmpeg = project_root / "bin" / "ffmpeg.exe"
+        if project_ffmpeg.exists():
+            ffmpeg = str(project_ffmpeg)
+        else:
+            ffmpeg = os.getenv("FFMPEG_PATH") or shutil.which("ffmpeg") or r"C:\ffmpeg\bin\ffmpeg.exe"
         
         # 重新编码为标准H.264+AAC，确保元数据完整
         cmd = [

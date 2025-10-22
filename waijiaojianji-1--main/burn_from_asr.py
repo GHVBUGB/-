@@ -20,9 +20,18 @@ def generate_srt_via_asr(video_path: str, service: str = "tencent") -> Optional[
                 return None
             # Extract audio using ffmpeg via video_processor convention
             import subprocess
+            
+            # 优先使用项目内的ffmpeg
+            project_root = Path(__file__).parent
+            project_ffmpeg = project_root / "bin" / "ffmpeg.exe"
+            if project_ffmpeg.exists():
+                ffmpeg_path = str(project_ffmpeg)
+            else:
+                ffmpeg_path = os.getenv('FFMPEG_PATH', 'ffmpeg')
+            
             audio_path = str(Path(video_path).with_suffix("_audio.wav"))
             subprocess.run([
-                os.getenv('FFMPEG_PATH', 'ffmpeg'), '-i', video_path, '-vn', '-acodec', 'pcm_s16le',
+                ffmpeg_path, '-i', video_path, '-vn', '-acodec', 'pcm_s16le',
                 '-ar', '16000', '-ac', '1', '-y', audio_path
             ], check=True, capture_output=True)
 

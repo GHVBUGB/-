@@ -47,7 +47,15 @@ class TencentASRSDKService:
     def extract_audio(self, video_path: str, audio_path: str) -> bool:
         """从视频中提取音频"""
         try:
-            ffmpeg_path = os.getenv('FFMPEG_PATH', 'ffmpeg')
+            from pathlib import Path
+            
+            # 优先使用项目内的ffmpeg
+            project_root = Path(__file__).parent.parent.parent
+            project_ffmpeg = project_root / "bin" / "ffmpeg.exe"
+            if project_ffmpeg.exists():
+                ffmpeg_path = str(project_ffmpeg)
+            else:
+                ffmpeg_path = os.getenv('FFMPEG_PATH', 'ffmpeg')
             
             # 使用FFmpeg提取音频为WAV格式
             cmd = [
@@ -155,7 +163,15 @@ class TencentASRSDKService:
     def split_audio(self, audio_path: str, chunk_duration: int = 60) -> List[str]:
         """将音频文件分割成小片段"""
         try:
-            ffmpeg_path = os.getenv('FFMPEG_PATH', 'ffmpeg')
+            from pathlib import Path
+            
+            # 优先使用项目内的ffmpeg
+            project_root = Path(__file__).parent.parent.parent
+            project_ffmpeg = project_root / "bin" / "ffmpeg.exe"
+            if project_ffmpeg.exists():
+                ffmpeg_path = str(project_ffmpeg)
+            else:
+                ffmpeg_path = os.getenv('FFMPEG_PATH', 'ffmpeg')
             
             # 获取音频时长
             probe_cmd = [
@@ -343,7 +359,16 @@ class TencentASRSDKService:
             
             # 获取实际音频时长（精确到毫秒）
             try:
-                ffmpeg_path = os.getenv('FFMPEG_PATH', 'ffmpeg')
+                from pathlib import Path
+                
+                # 优先使用项目内的ffmpeg
+                project_root = Path(__file__).parent.parent.parent
+                project_ffmpeg = project_root / "bin" / "ffmpeg.exe"
+                if project_ffmpeg.exists():
+                    ffmpeg_path = str(project_ffmpeg)
+                else:
+                    ffmpeg_path = os.getenv('FFMPEG_PATH', 'ffmpeg')
+                    
                 cmd = [ffmpeg_path, '-i', audio_path, '-f', 'null', '-']
                 result = subprocess.run(cmd, capture_output=True, text=True)
                 

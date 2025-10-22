@@ -6,13 +6,24 @@ from typing import Optional, List
 
 
 def get_ffmpeg_path() -> str:
-    """Resolve ffmpeg binary path with environment, PATH, or Windows default."""
+    """Resolve ffmpeg binary path with project bin, environment, PATH, or Windows default."""
+    # 优先使用项目内的ffmpeg
+    project_root = Path(__file__).parent.parent.parent
+    project_ffmpeg = project_root / "bin" / "ffmpeg.exe"
+    if project_ffmpeg.exists():
+        return str(project_ffmpeg)
+    
+    # 其次使用环境变量
     env_path = os.getenv("FFMPEG_PATH")
     if env_path and os.path.exists(env_path):
         return env_path
+    
+    # 再次尝试从PATH中查找
     detected = shutil.which("ffmpeg")
     if detected:
         return detected
+    
+    # 最后使用Windows默认路径
     win_default = r"C:\\ffmpeg\\bin\\ffmpeg.exe"
     return win_default if os.path.exists(win_default) else "ffmpeg"
 

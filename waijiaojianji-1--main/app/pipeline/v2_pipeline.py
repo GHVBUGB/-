@@ -8,6 +8,11 @@ from app.utils.subtitle_burner import burn_subtitles
 
 
 def _get_ffmpeg() -> str:
+    # 优先使用项目内的ffmpeg
+    project_root = Path(__file__).parent.parent.parent
+    project_ffmpeg = project_root / "bin" / "ffmpeg.exe"
+    if project_ffmpeg.exists():
+        return str(project_ffmpeg)
     return os.getenv("FFMPEG_PATH") or shutil.which("ffmpeg") or r"C:\\ffmpeg\\bin\\ffmpeg.exe"
 
 

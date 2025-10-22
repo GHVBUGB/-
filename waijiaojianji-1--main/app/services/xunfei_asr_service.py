@@ -81,15 +81,31 @@ class XunfeiASRService:
         """按时长分割音频文件"""
         try:
             import subprocess
+            from pathlib import Path
             
-            # 设置ffmpeg和ffprobe路径
-            ffmpeg_path = r"C:\ffmpeg\bin\ffmpeg.exe"
-            ffprobe_path = r"C:\ffmpeg\bin\ffprobe.exe"
+            # 设置ffmpeg和ffprobe路径 - 优先使用项目内的二进制文件
+            project_root = Path(__file__).parent.parent.parent
+            ffmpeg_path = project_root / "bin" / "ffmpeg.exe"
+            ffprobe_path = project_root / "bin" / "ffprobe.exe"
             
-            if not os.path.exists(ffmpeg_path):
-                ffmpeg_path = "ffmpeg"
-            if not os.path.exists(ffprobe_path):
-                ffprobe_path = "ffprobe"
+            # 如果项目内没有，则使用系统默认路径
+            if not ffmpeg_path.exists():
+                ffmpeg_path = Path(r"C:\ffmpeg\bin\ffmpeg.exe")
+                if not ffmpeg_path.exists():
+                    ffmpeg_path = "ffmpeg"
+                else:
+                    ffmpeg_path = str(ffmpeg_path)
+            else:
+                ffmpeg_path = str(ffmpeg_path)
+                
+            if not ffprobe_path.exists():
+                ffprobe_path = Path(r"C:\ffmpeg\bin\ffprobe.exe")
+                if not ffprobe_path.exists():
+                    ffprobe_path = "ffprobe"
+                else:
+                    ffprobe_path = str(ffprobe_path)
+            else:
+                ffprobe_path = str(ffprobe_path)
             
             # 获取音频总时长
             result = subprocess.run([

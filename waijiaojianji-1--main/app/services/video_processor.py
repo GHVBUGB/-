@@ -235,11 +235,17 @@ class VideoProcessorService:
                                 if asr_service_type == 'xunfei':
                                     # 讯飞ASR服务：先提取音频，然后转录
                                     import subprocess
+                                    from pathlib import Path
                                     
-                                    # 获取FFmpeg路径
-                                    ffmpeg_path = os.getenv('FFMPEG_PATH', 'ffmpeg')
-                                    if ffmpeg_path == 'ffmpeg':
-                                        ffmpeg_path = r'C:\ffmpeg\bin\ffmpeg.exe'
+                                    # 获取FFmpeg路径 - 优先使用项目内的二进制文件
+                                    project_root = Path(__file__).parent.parent.parent
+                                    project_ffmpeg = project_root / "bin" / "ffmpeg.exe"
+                                    if project_ffmpeg.exists():
+                                        ffmpeg_path = str(project_ffmpeg)
+                                    else:
+                                        ffmpeg_path = os.getenv('FFMPEG_PATH', 'ffmpeg')
+                                        if ffmpeg_path == 'ffmpeg':
+                                            ffmpeg_path = r'C:\ffmpeg\bin\ffmpeg.exe'
                                     
                                     # 从视频中提取音频
                                     audio_path = final_output_path.replace('.mp4', '_audio.wav')
@@ -426,16 +432,22 @@ class VideoProcessorService:
         try:
             import subprocess
             import os
+            from pathlib import Path
             
             # 生成输出文件路径
             base_name = os.path.splitext(video_path)[0]
             output_path = f"{base_name}_with_subtitles.mp4"
             
-            # 获取FFmpeg路径
-            ffmpeg_path = os.getenv('FFMPEG_PATH', 'ffmpeg')
-            if ffmpeg_path == 'ffmpeg':
-                # 如果是默认值，尝试使用完整路径
-                ffmpeg_path = r'C:\\ffmpeg\\bin\\ffmpeg.exe'
+            # 获取FFmpeg路径 - 优先使用项目内的二进制文件
+            project_root = Path(__file__).parent.parent.parent
+            project_ffmpeg = project_root / "bin" / "ffmpeg.exe"
+            if project_ffmpeg.exists():
+                ffmpeg_path = str(project_ffmpeg)
+            else:
+                ffmpeg_path = os.getenv('FFMPEG_PATH', 'ffmpeg')
+                if ffmpeg_path == 'ffmpeg':
+                    # 如果是默认值，尝试使用完整路径
+                    ffmpeg_path = r'C:\\ffmpeg\\bin\\ffmpeg.exe'
             
             # 转换为相对路径以避免Windows路径问题
             try:
